@@ -16,7 +16,7 @@ function divide(a, b) {
   return a / b;
 }
 
-function applyOperation(operation) {
+function operate(operation) {
   let operationFunction;
   if (operation === "+") {
     operationFunction = add;
@@ -68,7 +68,7 @@ function addEvents() {
       buttonFunction = () => {
         if (isLockedInFirstOperand && !isWaitingForOperand) {
           secondOperand = operandDiv.textContent;
-          operandDiv.textContent = applyOperation(currentOperator);
+          operandDiv.textContent = operate(currentOperator);
         }
         operatorDiv.textContent = button.textContent;
         currentOperator = button.textContent;
@@ -80,7 +80,7 @@ function addEvents() {
       buttonFunction = () => {
         if (isLockedInFirstOperand && !isWaitingForOperand) {
           secondOperand = operandDiv.textContent;
-          operandDiv.textContent = applyOperation(currentOperator);
+          operandDiv.textContent = operate(currentOperator);
           operatorDiv.textContent = currentOperator = "";
           isWaitingForOperand = true;
           isLockedInFirstOperand = false;

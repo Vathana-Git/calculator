@@ -56,8 +56,9 @@ function addButtonEvents() {
       });
     } else if (button.textContent === ".") {
       button.addEventListener("click", () => {
-        if (!isWaitingForOperand) {
+        if (isWaitingForOperand) {
           operandDiv.textContent = "0.";
+          isWaitingForOperand = false;
         } else if (!operandDiv.textContent.includes(".")) {
           operandDiv.textContent += ".";
         }

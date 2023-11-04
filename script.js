@@ -42,10 +42,10 @@ function addEvents() {
   
   digitButtons.forEach((button) => {
 
-    let buttonFunction;
+    let clickFunction;
 
     if (!isNaN(button.textContent)) {
-      buttonFunction = () => {
+      clickFunction = () => {
         if (isWaitingForOperand) {
           operandDiv.textContent = button.textContent;
           isWaitingForOperand = false;
@@ -56,7 +56,7 @@ function addEvents() {
         }
       };
     } else if (button.textContent === ".") {
-      buttonFunction = () => {
+      clickFunction = () => {
         if (isWaitingForOperand) {
           operandDiv.textContent = "0.";
           isWaitingForOperand = false;
@@ -65,10 +65,19 @@ function addEvents() {
         }
       };
     } else if ("+-x/".includes(button.textContent)) {
-      buttonFunction = () => {
+      clickFunction = () => {
+        if (operandDiv.textContent === "ERROR") return;
         if (isLockedInFirstOperand && !isWaitingForOperand) {
           secondOperand = operandDiv.textContent;
-          operandDiv.textContent = operate(currentOperator);
+          if (secondOperand === "0" && currentOperator === "/") {
+            operandDiv.textContent = "ERROR";
+            operatorDiv.textContent = "";
+            isWaitingForOperand = true;
+            isLockedInFirstOperand = false;
+            return;
+          } else {
+            operandDiv.textContent = operate(currentOperator);
+          }
         }
         operatorDiv.textContent = button.textContent;
         currentOperator = button.textContent;
@@ -77,30 +86,64 @@ function addEvents() {
         isWaitingForOperand = true;
       };
     } else if (button.textContent === "=") {
-      buttonFunction = () => {
+      clickFunction = () => {
         if (isLockedInFirstOperand && !isWaitingForOperand) {
           secondOperand = operandDiv.textContent;
-          operandDiv.textContent = operate(currentOperator);
+          if (secondOperand === "0" && currentOperator === "/") {
+            operandDiv.textContent = "ERROR";
+          } else {
+            operandDiv.textContent = operate(currentOperator);
+          }
           operatorDiv.textContent = currentOperator = "";
           isWaitingForOperand = true;
           isLockedInFirstOperand = false;
         }
       };
+    } else if (button.textContent === "+/-") {
+      clickFunction = () => {
+        if (!isWaitingForOperand) {
+          if (Number(operandDiv.textContent) > 0) {
+            operandDiv.textContent = "-" + operandDiv.textContent
+          } else {
+            if (operandDiv.textContent[0] === "-") {
+              operandDiv.textContent = operandDiv.textContent.slice(1);
+            }
+          }
+          if(isLockedInFirstOperand) {
+            firstOperand = operandDiv.textContent;
+          }
+        }
+      }
     } else if (button.textContent === "C") {
-      buttonFunction = () => {
-        operandDiv.textContent = "0";
+      clickFunction = () => {
+        if (operandDiv.textContent === "ERROR") {
+          let acButton = document.evaluate("//div[@class = 'buttons-row']//div[text() = 'AC']", document)
+          acButton.iterateNext().click();
+        } else {
+          operandDiv.textContent = "0";
+        }
       };
     } else if (button.textContent === "AC") {
-      buttonFunction = () => {
+      clickFunction = () => {
         operatorDiv.textContent = "";
         operandDiv.textContent = "0";
         isWaitingForOperand = true;
         isLockedInFirstOperand = false;
         currentOperator = "";
       };
+    } else if (button.textContent === "<") {
+      clickFunction = () => {
+        if(!isWaitingForOperand) {
+          if (operandDiv.textContent >= 10 || operandDiv.textContent <= -10 || operandDiv.textContent.includes("."))  {
+            operandDiv.textContent = operandDiv.textContent.slice(0, operandDiv.textContent.length - 1);
+          } else {
+            operandDiv.textContent = 0;
+          }
+        }
+      }
     }
 
-    button.addEventListener("click", buttonFunction);
+    button.addEventListener("click", clickFunction);
 
   });  
 

@@ -116,7 +116,9 @@ function addEvents() {
     } else if (e.key === "Escape") {
       find = "AC";
     } else if (e.key === "Backspace") {
-      find = "C";
+      find = "<";
+    } else if (e.key ==="`") {
+      find = "+/-";
     }
 
     let button = document.evaluate(`//div[@class = 'buttons-row']//div[text() = '${find}']`, document);
